@@ -104,10 +104,7 @@ func movePredicateHelper(ctx context.Context, predicate string, gid uint32) erro
 	for it.Seek(prefix); it.ValidForPrefix(prefix); {
 		item := it.Item()
 		key := item.Key()
-		if !x.Parse(key).IsData() {
-			it.Next()
-			continue
-		}
+
 		if bytes.Equal(key, prevKey) {
 			it.Next()
 			continue
