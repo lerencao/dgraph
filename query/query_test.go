@@ -2216,6 +2216,7 @@ func TestTwoShortestPath(t *testing.T) {
 			}
 		}`
 	js := processToFastJsonNoErr(t, query)
+	fmt.Println(string(js))
 	require.JSONEq(t,
 		`{"data": {"_path_":[{"uid":"0x1","path":[{"uid":"0x1f","path":[{"uid":"0x3e8","path":[{"uid":"0x3ea"}]}]}]},{"uid":"0x1","path":[{"uid":"0x1f","path":[{"uid":"0x3e8","path":[{"uid":"0x3e9","path":[{"uid":"0x3ea"}]}]}]}]}],"me":[{"name":"Michonne"},{"name":"Andrea"},{"name":"Alice"},{"name":"Matt"}]}}`,
 		js)
