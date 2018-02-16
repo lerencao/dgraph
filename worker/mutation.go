@@ -395,7 +395,7 @@ func Timestamps(ctx context.Context, num *intern.Num) (*api.AssignedIds, error) 
 	return c.Timestamps(ctx, num)
 }
 
-func fillContext(tctx *api.TxnContext, gid uint32, startTs uint64) {
+func fillTxnContext(tctx *api.TxnContext, gid uint32, startTs uint64) {
 	node := groups().Node
 	if txn := posting.Txns().Get(startTs); txn != nil {
 		txn.Fill(tctx)
@@ -415,8 +415,7 @@ func proposeOrSend(ctx context.Context, gid uint32, m *intern.Mutations, chr cha
 		// we don't timeout after proposing
 		res.err = node.proposeAndWait(ctx, &intern.Proposal{Mutations: m})
 		res.ctx = &api.TxnContext{}
-
-		fillContext(res.ctx, gid, m.StartTs)
+		fillTxnContext(res.ctx, gid, m.StartTs)
 		chr <- res
 		return
 	}
@@ -588,7 +587,7 @@ func (w *grpcWorker) Mutate(ctx context.Context, m *intern.Mutations) (*api.TxnC
 	}
 
 	err := node.proposeAndWait(ctx, &intern.Proposal{Mutations: m})
-	fillContext(txnCtx, m.GroupId, m.StartTs)
+	fillTxnContext(txnCtx, m.GroupId, m.StartTs)
 	return txnCtx, err
 }
 
