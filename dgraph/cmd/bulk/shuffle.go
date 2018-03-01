@@ -70,6 +70,7 @@ func (s *shuffler) createBadger(i int) *badger.ManagedDB {
 	opt.TableLoadingMode = bo.MemoryMap
 	opt.Dir = s.opt.shardOutputDirs[i]
 	opt.ValueDir = opt.Dir
+	opt.ValueThreshold = 1024
 	db, err := badger.OpenManaged(opt)
 	x.Check(err)
 	s.dbs = append(s.dbs, db)
