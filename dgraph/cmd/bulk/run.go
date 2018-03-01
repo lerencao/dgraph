@@ -31,9 +31,12 @@ import (
 
 	"github.com/dgraph-io/dgraph/x"
 	"github.com/spf13/cobra"
+	"runtime/debug"
 )
 
 var Bulk x.SubCommand
+
+var MaxThreads int
 
 func init() {
 	Bulk.Cmd = &cobra.Command{
@@ -88,6 +91,10 @@ func init() {
 }
 
 func run() {
+	if MaxThreads != 0 {
+		debug.SetMaxThreads(MaxThreads)
+	}
+
 	opt := options{
 		RDFDir:        Bulk.Conf.GetString("rdfs"),
 		SchemaFile:    Bulk.Conf.GetString("schema_file"),

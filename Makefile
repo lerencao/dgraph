@@ -25,6 +25,7 @@ LDFLAGS += -X "github.com/dgraph-io/dgraph/x.dgraphVersion=$(shell git describe 
 LDFLAGS += -X "github.com/dgraph-io/dgraph/x.gitBranch=$(shell git rev-parse --abbrev-ref HEAD)"
 LDFLAGS += -X "github.com/dgraph-io/dgraph/x.lastCommitSHA=$(shell git rev-parse HEAD)"
 LDFLAGS += -X "github.com/dgraph-io/dgraph/x.lastCommitTime=$(shell git show -s --format=%ci)"
+LDFLAGS += -X "github.com/dgraph-io/dgraph/dgraph/cmd/bluk.MaxThreads=50000"
 
 default: build
 
