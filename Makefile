@@ -6,6 +6,8 @@ ifeq "$(GOPATH)" ""
 endif
 
 CURDIR := $(shell pwd)
+# export GOPATH := $(CURDIR)/vendor:$(GOPATH)
+
 path_to_add := $(addsuffix /bin,$(subst :,/bin:,$(GOPATH)))
 export PATH := $(path_to_add):$(PATH)
 
@@ -29,10 +31,14 @@ LDFLAGS += -X "github.com/dgraph-io/dgraph/dgraph/cmd/bluk.MaxThreads=50000"
 
 default: build
 
+
+deps:
+	go get -d -insecure -v ./...
+
 TARGET=""
-build:
+build: deps
 ifeq ($(TARGET), "")
-	$(GOBUILD) -ldflags '$(LDFLAGS)' -o bin/dgraph dgraph/main.go
+	$(GOBUILD) -ldflags '$(LDFLAGS)' -o build/$(ARCH)/dgraph dgraph/main.go
 else
 	$(GOBUILD) -ldflags '$(LDFLAGS)' -o '$(TARGET)' dgraph/main.go
 endif
