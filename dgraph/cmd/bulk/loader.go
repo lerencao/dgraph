@@ -61,6 +61,8 @@ type options struct {
 	MapShards    int
 	ReduceShards int
 
+	ShuffleValueThreshold int
+
 	shardOutputDirs []string
 }
 

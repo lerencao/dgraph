@@ -31,6 +31,8 @@ import (
 
 	"github.com/dgraph-io/dgraph/x"
 	"github.com/spf13/cobra"
+	"runtime/debug"
+	"github.com/dgraph-io/badger"
 )
 
 var Bulk x.SubCommand
@@ -58,6 +60,7 @@ func init() {
 			" to the size of the RDF file and the amount of indexing used.")
 	flag.IntP("num_go_routines", "j", runtime.NumCPU(),
 		"Number of worker threads to use (defaults to the number of logical CPUs)")
+	flag.Int("max_go_routines", 10000, "Max number of goroutines to use")
 	flag.Int64("mapoutput_mb", 64,
 		"The estimated size of each map file output. Increasing this increases memory usage.")
 	flag.Bool("expand_edges", true,
@@ -85,9 +88,17 @@ func init() {
 		"Number of reduce shards. This determines the number of dgraph instances in the final "+
 			"cluster. Increasing this potentially decreases the reduce stage runtime by using "+
 			"more parallelism, but increases memory usage.")
+	flag.Int("shuffle_value_threshold", badger.DefaultOptions.ValueThreshold,
+		"Value Threshold when shuffling. " +
+			"If value size >= this threshold, only store value offsets in badger tree.")
 }
 
 func run() {
+	maxGoroutines := Bulk.Conf.GetInt("max_go_routines")
+	if  maxGoroutines > 10000 {
+		debug.SetMaxThreads(maxGoroutines)
+	}
+
 	opt := options{
 		RDFDir:        Bulk.Conf.GetString("rdfs"),
 		SchemaFile:    Bulk.Conf.GetString("schema_file"),
@@ -105,6 +116,7 @@ func run() {
 		HttpAddr:      Bulk.Conf.GetString("http"),
 		MapShards:     Bulk.Conf.GetInt("map_shards"),
 		ReduceShards:  Bulk.Conf.GetInt("reduce_shards"),
+		ShuffleValueThreshold: Bulk.Conf.GetInt("shuffle_value_threshold"),
 	}
 
 	if opt.Version {
